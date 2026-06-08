@@ -9,7 +9,7 @@ import os
 if not os.path.exists('similarity.pkl'):
     with st.spinner('Downloading model... please wait ⏳'):
         url = 'https://drive.google.com/uc?export=download&id=15CeCJv4HQrNkoqqyJoI__XIvMYtCnkv1'
-        gdown.download(url, 'similarity.pkl', quiet=False, fuzzy=True)
+        gdown.download(url, 'similarity.pkl', quiet=False)
 
 # ── Load data ──────────────────────────────────────────────
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
