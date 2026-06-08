@@ -2,6 +2,17 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
+import gdown
+import os
+
+# ── Download similarity.pkl from Google Drive if not present ──
+if not os.path.exists('similarity.pkl'):
+    with st.spinner('Downloading model... please wait ⏳'):
+        gdown.download(
+            'https://drive.google.com/uc?id=15CeCJv4HQrNkoqqyJoI__XIvMYtCnkv1',
+            'similarity.pkl',
+            quiet=False
+        )
 
 def fetch_poster(movie_id):
     try:
@@ -30,12 +41,12 @@ def recommend(movie):
         recommend_posters.append(fetch_poster(movie_id))
     return recommend_movies, recommend_posters
 
-# ── Load data ─────────────────────────────────────────────
+# ── Load data ──────────────────────────────────────────────
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 
-# ── UI ────────────────────────────────────────────────────
+# ── UI ─────────────────────────────────────────────────────
 st.title('🎬 Movie Mesh')
 st.markdown("##### Find movies similar to what you love")
 st.divider()
