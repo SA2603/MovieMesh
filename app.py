@@ -8,12 +8,15 @@ import os
 # ── Download similarity.pkl from Google Drive if not present ──
 if not os.path.exists('similarity.pkl'):
     with st.spinner('Downloading model... please wait ⏳'):
-        gdown.download(
-            'https://drive.google.com/uc?id=15CeCJv4HQrNkoqqyJoI__XIvMYtCnkv1',
-            'similarity.pkl',
-            quiet=False
-        )
+        url = 'https://drive.google.com/uc?export=download&id=15CeCJv4HQrNkoqqyJoI__XIvMYtCnkv1'
+        gdown.download(url, 'similarity.pkl', quiet=False, fuzzy=True)
 
+# ── Load data ──────────────────────────────────────────────
+movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
+movies = pd.DataFrame(movies_dict)
+similarity = pickle.load(open('similarity.pkl', 'rb'))
+
+# ── Fetch poster from TMDB ─────────────────────────────────
 def fetch_poster(movie_id):
     try:
         response = requests.get(
@@ -28,6 +31,7 @@ def fetch_poster(movie_id):
     except Exception:
         return None
 
+# ── Recommend function ─────────────────────────────────────
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
@@ -40,11 +44,6 @@ def recommend(movie):
         recommend_movies.append(movies.iloc[i[0]].title)
         recommend_posters.append(fetch_poster(movie_id))
     return recommend_movies, recommend_posters
-
-# ── Load data ──────────────────────────────────────────────
-movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
-movies = pd.DataFrame(movies_dict)
-similarity = pickle.load(open('similarity.pkl', 'rb'))
 
 # ── UI ─────────────────────────────────────────────────────
 st.title('🎬 Movie Mesh')
